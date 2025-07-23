@@ -39,7 +39,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/setupTests.ts',
-    css: true,
+    css: process.env.CI ? false : true, // Disable CSS processing in CI to avoid PostCSS issues
     pool: 'threads',
     poolOptions: {
       threads: {
