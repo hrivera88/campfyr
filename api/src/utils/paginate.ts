@@ -8,7 +8,7 @@ type PaginateOptions<TModel, TWhereInput, TSelect, TOrderBy> = {
     model: keyof PrismaClient;
     where?: TWhereInput;
     select?: TSelect;
-    orderBy?: TOrderBy;
+    orderBy?: TOrderBy | TOrderBy[];
     cursor?: string;
     take?: number;
     searchField?: keyof TWhereInput;
