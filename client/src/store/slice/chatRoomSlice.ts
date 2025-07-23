@@ -18,11 +18,21 @@ const chatRoomSlice = createSlice({
     reducers: {
         setActiveRoom(state, action: PayloadAction<ChatRoomSchemaType | null>) { 
             state.activeRoom = action.payload;
-            localStorage.setItem('activeRoom', JSON.stringify(action.payload));
+            try {
+                localStorage.setItem('activeRoom', JSON.stringify(action.payload));
+            } catch (error) {
+                // Handle localStorage errors gracefully (e.g., quota exceeded, not available)
+                console.warn('Failed to save active room to localStorage:', error);
+            }
         },
         clearActiveRoom(state) { 
             state.activeRoom = null;
-            localStorage.removeItem('activeRoom');
+            try {
+                localStorage.removeItem('activeRoom');
+            } catch (error) {
+                // Handle localStorage errors gracefully (e.g., not available)
+                console.warn('Failed to remove active room from localStorage:', error);
+            }
         },
         setRoomMembership(state, action: PayloadAction<boolean>) { 
             state.isMember = action.payload;

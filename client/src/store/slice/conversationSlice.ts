@@ -15,7 +15,12 @@ const conversationSlice = createSlice({
     reducers: {
         setActiveConversation(state, action: PayloadAction<DirectConversationSchemaType | null>) {
             state.activeConversation = action.payload;
-            localStorage.setItem('activeConversation', JSON.stringify(action.payload));
+            try {
+                localStorage.setItem('activeConversation', JSON.stringify(action.payload));
+            } catch (error) {
+                // Handle localStorage errors gracefully (e.g., quota exceeded, not available)
+                console.warn('Failed to save active conversation to localStorage:', error);
+            }
         }
     }
 });
