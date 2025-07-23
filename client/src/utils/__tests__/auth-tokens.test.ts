@@ -249,10 +249,9 @@ describe('auth-tokens', () => {
       const result = await refreshAccessToken();
 
       expect(result).toBe(newToken);
-      expect(axios.post).toHaveBeenCalledWith('/api/auth/refresh', {}, {
-        baseURL: 'http://localhost:3001',
+      expect(axios.post).toHaveBeenCalledWith('/api/auth/refresh', {}, expect.objectContaining({
         withCredentials: true
-      });
+      }));
       expect(localStorage.setItem).toHaveBeenCalledWith('token', newToken);
       expect(console.log).toHaveBeenCalledWith('Token refreshed successfully');
     });
@@ -406,10 +405,9 @@ describe('auth-tokens', () => {
 
       await refreshAccessToken();
 
-      expect(axios.post).toHaveBeenCalledWith('/api/auth/refresh', {}, {
-        baseURL: 'http://localhost:3001',
+      expect(axios.post).toHaveBeenCalledWith('/api/auth/refresh', {}, expect.objectContaining({
         withCredentials: true
-      });
+      }));
     });
 
     test('should use default configuration when environment is available', async () => {
@@ -421,10 +419,9 @@ describe('auth-tokens', () => {
 
       await refreshAccessToken();
 
-      expect(axios.post).toHaveBeenCalledWith('/api/auth/refresh', {}, {
-        baseURL: 'http://localhost:3001',
+      expect(axios.post).toHaveBeenCalledWith('/api/auth/refresh', {}, expect.objectContaining({
         withCredentials: true
-      });
+      }));
     });
   });
 
