@@ -81,7 +81,7 @@ export const useChatSocket = ({
         const handleStopTyping = (user: TypingUser) => {
             setTypingUsers((prev) => prev.filter((u) => u.userId !== user.userId));
         };
-        const handleConnectError = (error: any) => {
+        const handleConnectError = (error: Error) => {
             console.error("Socket connection error:", error.message);
         };
 
@@ -100,10 +100,35 @@ export const useChatSocket = ({
             }
         };
 
+        // Handle room user presence updates
+        const handleUserJoined = (data: { userId: string }) => {
+            console.log('User joined room:', data.userId);
+            if (roomRef.current) {
+                queryClient.invalidateQueries({ queryKey: ['roomUsers', roomRef.current] });
+            }
+        };
+
+        const handleUserLeft = (data: { userId: string }) => {
+            console.log('User left room:', data.userId);
+            if (roomRef.current) {
+                queryClient.invalidateQueries({ queryKey: ['roomUsers', roomRef.current] });
+            }
+        };
+
+        const handleRoomUsers = (activeUsers: string[]) => {
+            console.log('Room users updated:', activeUsers);
+            if (roomRef.current) {
+                queryClient.invalidateQueries({ queryKey: ['roomUsers', roomRef.current] });
+            }
+        };
+
         socket.on("chat:message", handleChatMessage);
         socket.on("direct:message", handleDirectMessage);
         socket.on("chat:typing", handleTyping);
         socket.on("chat:stopTyping", handleStopTyping);
+        socket.on("userJoined", handleUserJoined);
+        socket.on("userLeft", handleUserLeft);
+        socket.on("roomUsers", handleRoomUsers);
         socket.on("connect_error", handleConnectError);
 
         return () => {
@@ -111,6 +136,9 @@ export const useChatSocket = ({
             socket.off("chat:typing", handleTyping);
             socket.off("direct:message", handleDirectMessage);
             socket.off("chat:stopTyping", handleStopTyping);
+            socket.off("userJoined", handleUserJoined);
+            socket.off("userLeft", handleUserLeft);
+            socket.off("roomUsers", handleRoomUsers);
             socket.off("connect_error", handleConnectError);
         }
     }, [socket, activeRoomId, activeConversationId, queryClient]);
