@@ -60,12 +60,13 @@ jobs:
         run: cd api && npx prisma migrate deploy
 
       - name: Run tests
+        working-directory: ./api
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/campfyr_test
           REDIS_URL: redis://localhost:6379
           JWT_SECRET: test-jwt-secret-key-for-ci
           NODE_ENV: test
-        run: npm run test --workspace=api
+        run: npm test
 
       - name: Run linter
         run: npm run lint --workspace=api

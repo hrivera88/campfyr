@@ -9,8 +9,9 @@ dotenv.config();
 const globalPrisma = new PrismaClient();
 
 // Set test environment variables if not already set
-// Use PostgreSQL test database
+// Use PostgreSQL test database - respect CI environment or use local default
 if (!process.env.DATABASE_URL) {
+  // Default for local development
   process.env.DATABASE_URL = 'postgresql://halbertrivera@localhost:5432/campfyr_test';
 }
 
