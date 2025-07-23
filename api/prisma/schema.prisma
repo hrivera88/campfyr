@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/generated/prisma"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id                  String               @id @default(uuid())
+  name                String               @unique
+  createdAt           DateTime             @default(now())
+  users               User[]
+  rooms               Room[]
+  directConversations DirectConversation[]
+  invitations         Invitation[]         @relation("OrgInvitations")
+}
+
+model Invitation {
+  id             String       @id @default(uuid())
+  email          String
+  invitedById    String
+  invitedBy      User         @relation("Inviter", fields: [invitedById], references: [id])
+  organizationId String
+  organization   Organization @relation("OrgInvitations", fields: [organizationId], references: [id])
+  status         String       @default("pending")
+  token          String       @unique
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+}
+
+model User {
+  id                   String               @id @default(uuid())
+  email                String               @unique
+  username             String               @unique
+  passwordHash         String
+  isOnline             Boolean              @default(false)
+  lastSeenAt           DateTime?
+  avatarUrl            String?
+  resetToken           String? // Password reset token
+  resetTokenExpiry     DateTime? // When the reset token expires
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  organizationId       String
+  organization         Organization         @relation(fields: [organizationId], references: [id])
+  messages             Message[]
+  rooms                RoomUser[]
+  sentDirectMessages   DirectMessage[]      @relation("SentMessages")
+  user1Conversations   DirectConversation[] @relation("User1Conversations")
+  user2Conversations   DirectConversation[] @relation("User2Conversations")
+  videoCallParticipant VideoCall[]          @relation("CallParticipant")
+  videoCallInitiator   VideoCall[]          @relation("CallInitiator")
+  deletedAt            DateTime?
+  invitationsSent      Invitation[]         @relation("Inviter")
+}
+
+model Message {
+  id            String   @id @default(uuid())
+  content       String
+  fileUrl       String?
+  fileName      String?
+  mimeType      String?
+  audioDuration Int?
+  audioFileSize Int?
+  audioFormat   String?
+  timestamp     DateTime @default(now())
+  sender        User     @relation(fields: [senderId], references: [id])
+  senderId      String
+  roomId        String
+  room          Room     @relation(fields: [roomId], references: [id])
+}
+
+model Room {
+  id             String       @id @default(uuid())
+  name           String       @unique
+  createdAt      DateTime     @default(now())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  users          RoomUser[]
+  messages       Message[]
+  deletedAt      DateTime?
+
+  @@unique([organizationId, name])
+}
+
+model RoomUser {
+  userId String
+  roomId String
+
+  user User @relation(fields: [userId], references: [id])
+  room Room @relation(fields: [roomId], references: [id])
+
+  @@id([userId, roomId])
+}
+
+model DirectConversation {
+  id             String          @id @default(uuid())
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id])
+  user1Id        String
+  user2Id        String
+  user1          User            @relation("User1Conversations", fields: [user1Id], references: [id])
+  user2          User            @relation("User2Conversations", fields: [user2Id], references: [id])
+  messages       DirectMessage[]
+  createdAt      DateTime        @default(now())
+  deletedAt      DateTime?
+  videoCalls     VideoCall[]
+
+  @@unique([user1Id, user2Id, organizationId])
+}
+
+model DirectMessage {
+  id             String             @id @default(uuid())
+  conversation   DirectConversation @relation(fields: [conversationId], references: [id])
+  conversationId String
+  sender         User               @relation("SentMessages", fields: [senderId], references: [id])
+  senderId       String
+  content        String
+  timestamp      DateTime           @default(now())
+  fileUrl        String?
+  fileName       String?
+  mimeType       String?
+  audioDuration  Int?
+  audioFileSize  Int?
+  audioFormat    String?
+}
+
+model VideoCall {
+  id             String             @id @default(uuid())
+  conversationId String
+  conversation   DirectConversation @relation(fields: [conversationId], references: [id])
+  initiatorId    String
+  initiator      User               @relation("CallInitiator", fields: [initiatorId], references: [id])
+  participantId  String
+  participant    User               @relation("CallParticipant", fields: [participantId], references: [id])
+  status         String
+  startedAt      DateTime           @default(now())
+  endedAt        DateTime?
+  duration       Int?
+}

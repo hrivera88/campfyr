@@ -1,0 +1,18 @@
+# api/Dockerfile.test
+FROM node:20
+
+WORKDIR /app
+
+COPY . .
+
+COPY package*.json ./
+
+ENV NODE_ENV=test
+
+RUN npm install
+RUN npx prisma generate
+RUN npm run build
+RUN cp -r src/generated dist/src/
+
+# Run test command instead of launching the server
+CMD ["npm", "run", "test"]

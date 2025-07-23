@@ -1,0 +1,13 @@
+# Dockerfile.dev
+FROM node:20
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+# Run the app in watch mode (TypeScript)
+CMD ["npx", "ts-node-dev", "--respawn", "--transpile-only", "src/index.ts"]

@@ -1,0 +1,40 @@
+<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="80" r="70" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  
+  <!-- Keylock body -->
+  <rect x="75" y="85" width="50" height="35" rx="6" fill="#03a9f4"/>
+  <rect x="77" y="87" width="46" height="31" rx="4" fill="#0288d1"/>
+  
+  <!-- Keylock shackle -->
+  <path d="M85 85 L85 70 Q85 60 100 60 Q115 60 115 70 L115 85" 
+        fill="none" 
+        stroke="#03a9f4" 
+        stroke-width="6" 
+        stroke-linecap="round"/>
+  
+  <!-- Keyhole -->
+  <circle cx="100" cy="100" r="4" fill="#01579b"/>
+  <rect x="98" y="100" width="4" height="8" fill="#01579b"/>
+  
+  <!-- Question mark background circle -->
+  <circle cx="130" cy="55" r="18" fill="#FFE45F"/>
+  
+  <!-- Question mark -->
+  <text x="130" y="57" 
+        font-family="Arial, sans-serif" 
+        font-size="24" 
+        font-weight="bold" 
+        fill="white" 
+        text-anchor="middle" 
+        dominant-baseline="middle">?</text>
+  
+  <!-- Decorative dots -->
+  <circle cx="60" cy="45" r="3" fill="#e2e8f0"/>
+  <circle cx="65" cy="125" r="2" fill="#e2e8f0"/>
+  <circle cx="140" cy="115" r="3" fill="#e2e8f0"/>
+  <circle cx="50" cy="90" r="2" fill="#e2e8f0"/>
+  
+  <!-- Subtle shadow under lock -->
+  <ellipse cx="100" cy="135" rx="25" ry="4" fill="#e2e8f0" opacity="0.5"/>
+</svg>

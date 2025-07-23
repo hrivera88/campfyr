@@ -1,0 +1,13 @@
+{
+  "client/**/*.{ts,tsx}": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "api/**/*.{ts,js}": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "**/*.{json,md,yml,yaml}": [
+    "prettier --write"
+  ]
+}
