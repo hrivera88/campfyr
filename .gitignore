@@ -124,3 +124,6 @@ playwright/.cache/
 tmp/
 temp/
 extra/
+
+# Claude Code instructions
+CLAUDE.md
