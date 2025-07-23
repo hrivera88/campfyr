@@ -89,6 +89,15 @@ router.post('/login', async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
         return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    // Update user online status on login
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            isOnline: true,
+        },
+    });
+
     // JSON Web Token Handling
     const token = jwt.sign(
         { userId: user.id, organizationId: user.organizationId },
@@ -169,6 +178,14 @@ router.post('/refresh', async (req, res) => {
 
         // Invalidate old token
         await redis.del(`refresh:${payload.userId}`);
+
+        // Update user online status on token refresh (user is actively using the app)
+        await prisma.user.update({
+            where: { id: payload.userId },
+            data: {
+                isOnline: true,
+            },
+        });
 
         // Generate new tokens
         const newAccessToken = jwt.sign({ userId: payload.userId, organizationId: payload.organizationId }, JWT_SECRET, { expiresIn: '1h' });
