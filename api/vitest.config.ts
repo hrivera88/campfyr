@@ -12,13 +12,7 @@ export default defineConfig({
                 singleFork: true // Run all tests in a single fork to prevent database conflicts
             }
         },
-        testTimeout: 30000, // Increase timeout for database operations
-        env: {
-            DATABASE_URL: 'postgresql://halbertrivera@localhost:5432/campfyr_test',
-            JWT_SECRET: 'test-jwt-secret',
-            JWT_REFRESH_SECRET: 'test-jwt-refresh-secret',
-            REDIS_URL: 'redis://localhost:6379',
-            NODE_ENV: 'test'
-        }
+        testTimeout: 30000 // Increase timeout for database operations
+        // Environment variables handled by setup.ts to respect CI overrides
     }
 });

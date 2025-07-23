@@ -1,12 +1,8 @@
 import dotenv from 'dotenv';
 import { beforeEach, afterEach } from 'vitest';
-import { PrismaClient } from '../src/generated/prisma';
 
 // Load environment variables for testing
 dotenv.config();
-
-// Global Prisma instance for cleanup
-const globalPrisma = new PrismaClient();
 
 // Set test environment variables if not already set
 // Use PostgreSQL test database - respect CI environment or use local default
@@ -30,6 +26,11 @@ if (!process.env.REDIS_URL) {
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'test';
 }
+
+import { PrismaClient } from '../src/generated/prisma';
+
+// Global Prisma instance for cleanup (created after env vars are set)
+const globalPrisma = new PrismaClient();
 
 console.log('🧪 Test environment configured:', {
   DATABASE_URL: process.env.DATABASE_URL,

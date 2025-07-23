@@ -13,7 +13,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use('/rooms', roomRoutes);
 
-const prisma = new PrismaClient();
+// Create Prisma client instance inside test suite to respect environment variables
+let prisma: PrismaClient;
 
 /**
  * Room Routes Security Tests
@@ -34,6 +35,9 @@ describe('Room Routes - Security & Authorization', () => {
   let expiredToken: string;
 
   beforeAll(async () => {
+    // Initialize Prisma client after environment setup
+    prisma = new PrismaClient();
+    
     // Create test organizations with unique names to avoid conflicts
     const timestamp = Date.now();
     testOrg1 = await prisma.organization.create({
