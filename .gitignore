@@ -98,6 +98,9 @@ Thumbs.db
 *.swo
 *~
 
+# Claude Code directory
+.claude/
+
 # TypeScript
 *.tsbuildinfo
 
