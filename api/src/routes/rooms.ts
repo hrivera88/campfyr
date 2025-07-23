@@ -29,7 +29,10 @@ router.get('/', async (req: RequestWithUser, res) => {
                 createdAt: true,
                 _count: { select: { users: true } }
             },
-            orderBy: { createdAt: "desc" },
+            orderBy: [
+                { createdAt: "desc" },
+                { id: "desc" }
+            ],
             searchField: "name",
             searchQuery: search
         });

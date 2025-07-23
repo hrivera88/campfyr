@@ -28,7 +28,6 @@ export async function paginate<TModel, TWhereInput, TSelect, TOrderBy>(prisma: P
     };
 
     if (cursor) {
-        queryOptions.skip = 1;
         queryOptions.cursor = { id: cursor };
     }
 
