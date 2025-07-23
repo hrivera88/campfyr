@@ -130,3 +130,4 @@ extra/
 
 # Claude Code instructions
 CLAUDE.md
+.claude/
