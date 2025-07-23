@@ -48,6 +48,12 @@ describe('auth-tokens', () => {
     // Mock window.dispatchEvent
     vi.spyOn(window, 'dispatchEvent').mockImplementation(() => true);
 
+    // Mock environment variable for consistent API URL
+    Object.defineProperty(import.meta, 'env', {
+      value: { VITE_API_URL: 'http://localhost:3001' },
+      configurable: true
+    });
+
     // Set up consistent time for testing
     mockDate = 1640995200000; // Jan 1, 2022 00:00:00 UTC
     vi.spyOn(Date, 'now').mockReturnValue(mockDate);
