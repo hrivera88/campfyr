@@ -69,10 +69,12 @@ jobs:
         run: npm test
 
       - name: Run linter
-        run: npm run lint --workspace=api
+        working-directory: ./api
+        run: npm run lint
 
       - name: Build backend
-        run: npm run build --workspace=api
+        working-directory: ./api
+        run: npm run build
 
   test-frontend:
     name: Frontend Tests
@@ -96,10 +98,12 @@ jobs:
         run: npm run test:safe --workspace=client
 
       - name: Run linter
-        run: npm run lint --workspace=client
+        working-directory: ./client
+        run: npm run lint
 
       - name: Build frontend
-        run: npm run build --workspace=client
+        working-directory: ./client
+        run: npm run build
 
   build-check:
     name: Full Build Verification
