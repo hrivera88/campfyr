@@ -123,3 +123,4 @@ playwright/.cache/
 # Temporary files
 tmp/
 temp/
+extra/
