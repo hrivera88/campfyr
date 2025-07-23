@@ -1,25 +1,26 @@
 import {
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Box,
-  Typography,
-  LinearProgress,
-  Tooltip,
-} from "@mui/material";
-import {
+  Delete,
   Mic,
   MicOff,
-  Send,
-  Delete,
-  PlayArrow,
   Pause,
+  PlayArrow,
+  Send,
   Stop,
-} from "@mui/icons-material";
-import { useState, useRef, useEffect } from "react";
+} from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  LinearProgress,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
 
 interface RecordVoiceButtonProps {
   onVoiceRecorded: (audioBlob: Blob, duration: number) => void;
@@ -27,7 +28,11 @@ interface RecordVoiceButtonProps {
   disabled?: boolean;
 }
 
-const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceButtonProps) => {
+const RecordVoiceButton = ({
+  onVoiceRecorded,
+  onTyping,
+  disabled,
+}: RecordVoiceButtonProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -35,6 +40,7 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
   const [isPlaying, setIsPlaying] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
+  const theme = useTheme();
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -68,7 +74,7 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
   const startTypingIndicator = () => {
     // Emit typing immediately when recording starts
     onTyping();
-    
+
     // Set up interval to emit typing every 1.5 seconds during recording
     typingIntervalRef.current = setInterval(() => {
       onTyping();
@@ -84,12 +90,12 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
 
   const requestMicrophonePermission = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
-        } 
+        },
       });
       streamRef.current = stream;
       return stream;
@@ -108,20 +114,22 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
       // Use webm with opus codec for best compression and quality
       const options = { mimeType: 'audio/webm;codecs=opus' };
       const mediaRecorder = new MediaRecorder(stream, options);
-      
+
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
-      mediaRecorder.ondataavailable = (event) => {
+      mediaRecorder.ondataavailable = event => {
         if (event.data.size > 0) {
           chunksRef.current.push(event.data);
         }
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm;codecs=opus' });
+        const blob = new Blob(chunksRef.current, {
+          type: 'audio/webm;codecs=opus',
+        });
         setAudioBlob(blob);
-        
+
         // Stop all tracks to release microphone
         stream.getTracks().forEach(track => track.stop());
       };
@@ -144,7 +152,6 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
           return prev + 1;
         });
       }, 1000);
-
     } catch (error) {
       console.error('Error starting recording:', error);
       stream.getTracks().forEach(track => track.stop());
@@ -152,7 +159,10 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
   };
 
   const pauseRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === 'recording'
+    ) {
       mediaRecorderRef.current.pause();
       setIsPaused(true);
       if (intervalRef.current) {
@@ -164,13 +174,16 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
   };
 
   const resumeRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === 'paused'
+    ) {
       mediaRecorderRef.current.resume();
       setIsPaused(false);
-      
+
       // Restart typing indicator when resumed
       startTypingIndicator();
-      
+
       // Resume timer
       intervalRef.current = setInterval(() => {
         setRecordingTime(prev => {
@@ -185,13 +198,16 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== 'inactive'
+    ) {
       mediaRecorderRef.current.stop();
     }
-    
+
     setIsRecording(false);
     setIsPaused(false);
-    
+
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -209,12 +225,12 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
     if (audioBlob && !isPlaying) {
       const audioUrl = URL.createObjectURL(audioBlob);
       audioRef.current = new Audio(audioUrl);
-      
+
       audioRef.current.onended = () => {
         setIsPlaying(false);
         URL.revokeObjectURL(audioUrl);
       };
-      
+
       audioRef.current.play();
       setIsPlaying(true);
     } else if (audioRef.current && isPlaying) {
@@ -235,15 +251,15 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
     setAudioBlob(null);
     setRecordingTime(0);
     setIsPlaying(false);
-    
+
     if (audioRef.current) {
       audioRef.current.pause();
     }
-    
+
     if (isRecording) {
       stopRecording();
     }
-    
+
     // Ensure typing indicator is stopped when dialog closes
     stopTypingIndicator();
   };
@@ -273,27 +289,27 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
   return (
     <>
       <Tooltip title="Record voice message">
-        <IconButton 
-          onClick={startRecording} 
+        <Button
+          onClick={startRecording}
           disabled={disabled || isRecording}
           size="small"
-          color="primary"
+          sx={{ minWidth: 0, p: 1, color: `${theme.palette.success.dark}` }}
         >
           <Mic />
-        </IconButton>
+        </Button>
       </Tooltip>
 
-      <Dialog 
-        open={dialogOpen} 
+      <Dialog
+        open={dialogOpen}
         onClose={handleCloseDialog}
-        maxWidth="sm" 
+        maxWidth="sm"
         fullWidth
         disableEscapeKeyDown={isRecording}
       >
         <DialogTitle sx={{ pb: 1 }}>
           {isRecording ? 'Recording Voice Message' : 'Voice Message Preview'}
         </DialogTitle>
-        
+
         <DialogContent>
           <Box sx={{ textAlign: 'center', py: 2 }}>
             {isRecording ? (
@@ -302,7 +318,7 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
                   <IconButton
                     onClick={isPaused ? resumeRecording : pauseRecording}
                     size="large"
-                    color="primary"
+                    sx={{ color: `${theme.palette.success.dark}` }}
                   >
                     {isPaused ? <PlayArrow /> : <Pause />}
                   </IconButton>
@@ -314,28 +330,35 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
                     <Stop />
                   </IconButton>
                 </Box>
-                
+
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   {formatTime(recordingTime)}
                 </Typography>
-                
-                <LinearProgress 
-                  variant="determinate" 
+
+                <LinearProgress
+                  variant="determinate"
                   value={(recordingTime / MAX_RECORDING_TIME) * 100}
                   sx={{ mb: 1 }}
                 />
-                
+
                 <Typography variant="caption" color="text.secondary">
                   {isPaused ? 'Recording paused' : 'Recording...'}
                 </Typography>
               </>
             ) : audioBlob ? (
               <>
-                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: 2,
+                    mb: 2,
+                  }}
+                >
                   <IconButton
                     onClick={playAudio}
                     size="large"
-                    color="primary"
+                    sx={{ color: `${theme.palette.success.dark}` }}
                   >
                     {isPlaying ? <Pause /> : <PlayArrow />}
                   </IconButton>
@@ -347,11 +370,11 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
                     <Delete />
                   </IconButton>
                 </Box>
-                
+
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   Duration: {formatTime(recordingTime)}
                 </Typography>
-                
+
                 <Typography variant="caption" color="text.secondary">
                   {isPlaying ? 'Playing...' : 'Ready to send'}
                 </Typography>
@@ -359,13 +382,11 @@ const RecordVoiceButton = ({ onVoiceRecorded, onTyping, disabled }: RecordVoiceB
             ) : null}
           </Box>
         </DialogContent>
-        
+
         <DialogActions>
-          <Button onClick={handleCloseDialog}>
-            Cancel
-          </Button>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
           {audioBlob && !isRecording && (
-            <Button 
+            <Button
               onClick={sendVoiceMessage}
               variant="contained"
               startIcon={<Send />}

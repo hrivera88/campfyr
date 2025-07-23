@@ -1,30 +1,31 @@
+import type { RootState } from '@/store';
+import { setMobileNavigationVisibility } from '@/store/slice/sidebarSlice';
+import { ChatBubble, Menu } from '@mui/icons-material';
 import {
   AppBar,
   Box,
   Button,
+  Drawer,
+  IconButton,
   Toolbar,
   useMediaQuery,
-  IconButton,
   useTheme,
-  Drawer,
-} from "@mui/material";
-import TopUserDropMenu from "./TopUserDropMenu";
-import { ChatBubble, Menu } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { setMobileNavigationVisibility } from "@/store/slice/sidebarSlice";
-import {useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/store";
-import MobileNavigation from "./MobileNavigation";
+} from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import MobileNavigation from './MobileNavigation';
+import TopUserDropMenu from './TopUserDropMenu';
 
-
-const drawerWidth = "80vw"
+const drawerWidth = '80vw';
 
 const TopBar = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isCompact = useMediaQuery(theme.breakpoints.down("md"));
+  const isCompact = useMediaQuery(theme.breakpoints.down('md'));
   const dispatch = useDispatch();
-  const isMobileNavVisible = useSelector((state: RootState) => state.sidebar.mobileNavigationVisibility);
+  const isMobileNavVisible = useSelector(
+    (state: RootState) => state.sidebar.mobileNavigationVisibility
+  );
 
   const handleDrawerToggle = () => {
     dispatch(setMobileNavigationVisibility(!isMobileNavVisible));
@@ -32,7 +33,13 @@ const TopBar = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: "#fafafa", borderBottom: `1px solid ${theme.palette.divider}` }}>
+      <AppBar
+        position="static"
+        sx={{
+          backgroundColor: '#fafafa',
+          borderBottom: `1px solid ${theme.palette.divider}`,
+        }}
+      >
         <Toolbar>
           {isCompact && (
             <IconButton
@@ -47,31 +54,35 @@ const TopBar = () => {
           )}
           <Box
             component="img"
-            src="/campfyr-logo.svg"
+            src="/campfire-logo.svg"
             alt="Campfyr logo"
             sx={{
-              width: "fit-content",
-              height: 24,
+              width: 'fit-content',
+              height: 40,
             }}
           />
           {!isCompact && (
             <Box sx={{ ml: 5 }}>
               <Button
-                onClick={() => navigate("chat")}
+                onClick={() => navigate('chat')}
                 startIcon={<ChatBubble fontSize="small" />}
                 color="primary"
-                sx={{ fontSize: ".80rem", pt: 1 }}
+                sx={{
+                  fontSize: '.80rem',
+                  pt: 1,
+                  color: `${theme.palette.success.dark}`,
+                }}
               >
                 Chat
               </Button>
             </Box>
           )}
-          <Box sx={{ position: "relative", ml: "auto" }}>
+          <Box sx={{ position: 'relative', ml: 'auto' }}>
             <TopUserDropMenu />
           </Box>
         </Toolbar>
       </AppBar>
-      <Box component={"nav"}>
+      <Box component={'nav'}>
         <Drawer
           variant="temporary"
           open={isMobileNavVisible}
@@ -79,10 +90,10 @@ const TopBar = () => {
           ModalProps={{ keepMounted: true }}
           sx={{
             display: {
-              xs: "block",
-              sm: "none",
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
+              xs: 'block',
+              sm: 'none',
+              '& .MuiDrawer-paper': {
+                boxSizing: 'border-box',
                 width: drawerWidth,
               },
             },

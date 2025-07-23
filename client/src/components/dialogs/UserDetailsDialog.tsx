@@ -1,12 +1,13 @@
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
   Box,
-} from "@mui/material";
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+  useTheme,
+} from '@mui/material';
 
 interface User {
   id: string;
@@ -22,6 +23,7 @@ interface UserDetailsDialogProps {
 }
 
 const UserDetailsDialog = ({ open, user, onClose }: UserDetailsDialogProps) => {
+  const theme = useTheme();
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>User Details</DialogTitle>
@@ -35,13 +37,19 @@ const UserDetailsDialog = ({ open, user, onClose }: UserDetailsDialogProps) => {
               <strong>Email:</strong> {user.email}
             </Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
-              <strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}
+              <strong>Joined:</strong>{' '}
+              {new Date(user.createdAt).toLocaleDateString()}
             </Typography>
           </Box>
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button
+          sx={{ color: `${theme.palette.success.dark}` }}
+          onClick={onClose}
+        >
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );
