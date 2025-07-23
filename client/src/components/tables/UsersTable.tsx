@@ -36,7 +36,7 @@ const UsersTable = () => {
   const theme = useTheme();
   const isCompact = useMediaQuery(theme.breakpoints.down("md"));
 
-  const { data, isLoading } = usePaginatedQuery<any>("users", "/api/users", {
+  const { data } = usePaginatedQuery<any>("users", "/api/users", {
     search,
     cursor,
     take,
@@ -142,7 +142,7 @@ const UsersTable = () => {
         rowsPerPage={take}
         rowsPerPageOptions={[10, 20, 50]}
         page={0}
-        onPageChange={(e, nextPage) => {
+        onPageChange={() => {
           if (data?.meta?.hasNextPage)
             setCursor(data.meta.nextCursor || undefined);
         }}

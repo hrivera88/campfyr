@@ -19,7 +19,7 @@ const Organization = () => {
   const theme = useTheme();
   const isCompact = useMediaQuery(theme.breakpoints.down("md"));
 
-  const { data: org, isLoading } = useQuery({
+  const { data: org } = useQuery({
     queryKey: ["organization"],
     queryFn: async () => {
       const response = await api.get("/api/users/organization");

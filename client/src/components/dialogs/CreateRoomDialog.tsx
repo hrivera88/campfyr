@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, useMediaQuery, Paper } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import api from "@/services/axios";
 import { useQueryClient } from "@tanstack/react-query";

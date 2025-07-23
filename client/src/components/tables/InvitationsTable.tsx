@@ -1,6 +1,5 @@
 import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
 import { Box, Table, TableHead, TableRow, TableCell, TableBody, Paper, TablePagination, TextField, Button, useTheme, useMediaQuery, Alert, Snackbar } from "@mui/material";
-import { Search, Info } from "@mui/icons-material";
 import { useState, useMemo } from "react";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -26,12 +25,12 @@ const InvitationsTable = () => {
     const isCompact = useMediaQuery(theme.breakpoints.down("md"));
     const queryClient = useQueryClient();
 
-    const { data, isLoading } = usePaginatedQuery<any>("invitations", "/api/users/invitations", { search, cursor, take });
+    const { data } = usePaginatedQuery<any>("invitations", "/api/users/invitations", { search, cursor, take });
     
     const resendInvitationMutation = useMutation({
         mutationFn: (invitationId: string) => 
             api.post(`/api/users/invitations/${invitationId}/resend`).then(res => res.data),
-        onSuccess: (data) => {
+        onSuccess: () => {
             setSnackbarMessage("Invitation resent successfully!");
             setSnackbarSeverity("success");
             setSnackbarOpen(true);

@@ -1,7 +1,5 @@
 import { Paper, useMediaQuery, useTheme } from "@mui/material";
 import UserProfileForm from "@/components/forms/UserProfileForm";
-import type { RootState } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
 
 
 

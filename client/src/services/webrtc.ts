@@ -296,7 +296,7 @@ export class WebRTCService {
     public static isSupported(): boolean {
         return !!(
             navigator.mediaDevices &&
-            navigator.mediaDevices.getUserMedia &&
+            typeof navigator.mediaDevices.getUserMedia === 'function' &&
             window.RTCPeerConnection
         );
     }

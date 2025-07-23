@@ -75,7 +75,6 @@ const MobileNavigation = () => {
   const isMobileNavVisible = useSelector(
     (state: RootState) => state.sidebar.mobileNavigationVisibility
   );
-  const mode = useSelector((state: RootState) => state.sidebar.mode);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const { data: rooms = [] } = useQuery<ChatRoomSchemaType[]>({
@@ -142,10 +141,8 @@ const MobileNavigation = () => {
   };
 
   const handleDrawerNavItemClick = ({
-    label,
     path,
   }: {
-    label: string;
     path: string;
   }) => {
     dispatch(setSidebarMode(path as SidebarMode));
@@ -231,7 +228,6 @@ const MobileNavigation = () => {
                     <ListItemButton
                       onClick={() =>
                         handleDrawerNavItemClick({
-                          label: item.label,
                           path: item.path!,
                         })
                       }

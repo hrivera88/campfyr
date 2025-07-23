@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import type { UserMessageSchemaType } from "@/schemas/chat";
 import { io } from "socket.io-client";
-import { capitalizeWords } from "@/utils/capitalizeWords";
 import { useQueryClient } from "@tanstack/react-query";
 
 type UseChatSocketProps = {
@@ -59,7 +58,7 @@ export const useChatSocket = ({
     useEffect(() => {
         if (!socket) return;
 
-        const handleChatMessage = (msg: UserMessageSchemaType) => {
+        const handleChatMessage = () => {
             const queryKey =
                 roomRef.current && activeRoomId
                     ? ["chatMessages", activeRoomId]
@@ -86,7 +85,7 @@ export const useChatSocket = ({
             console.error("Socket connection error:", error.message);
         };
 
-        const handleDirectMessage = (msg: UserMessageSchemaType) => {
+        const handleDirectMessage = () => {
             const queryKey =
                 roomRef.current && activeRoomId
                     ? ["chatMessages", activeRoomId]

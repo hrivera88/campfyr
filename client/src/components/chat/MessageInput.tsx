@@ -6,11 +6,11 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import EmojiPickerButton from "./EmojiPickerButton";
 import UploadFileButton from "./UploadFileButton";
 import RecordVoiceButton from "./RecordVoiceButton";
-import { PlayCircle, Image as ImageIcon, Close, VolumeUp } from "@mui/icons-material";
+import { PlayCircle, Close, VolumeUp } from "@mui/icons-material";
 import type { MessageInputState } from "./ChatWindow";
 
 type MessageInputProps = {
@@ -33,7 +33,7 @@ const MessageInput = ({
   const [filePreviews, setFilePreviews] = useState<
     { file: File; previewUrl: string | null }[]
   >([]);
-  const [fileErrors, setFileErrors] = useState<string[]>([]);
+  const [, setFileErrors] = useState<string[]>([]);
   const [voiceMessages, setVoiceMessages] = useState<
     { blob: Blob; duration: number; previewUrl: string }[]
   >([]);

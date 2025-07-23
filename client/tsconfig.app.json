@@ -32,5 +32,6 @@
       "@/*": ["src/*"],
     },
   },
-  "include": ["src", "declarations.d.ts"]
+  "include": ["src", "declarations.d.ts"],
+  "exclude": ["src/**/__tests__/**", "src/**/*.test.ts", "src/**/*.test.tsx", "src/setupTests.ts"]
 }

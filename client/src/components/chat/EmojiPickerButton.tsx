@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box, Button } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { EmojiEmotions } from "@mui/icons-material";
