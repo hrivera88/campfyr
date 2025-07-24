@@ -33,5 +33,6 @@ export function useSocket() {
             }
         }
     }, []);
+    
     return socket;
 }

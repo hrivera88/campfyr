@@ -23,10 +23,6 @@ export function registerSocketEvents(io: Server) {
         }
     });
     io.on('connection', async (socket: Socket) => {
-        console.log('New client');
-        // socket.onAny((event, ...args) => {
-        //     console.log(`[Socket ${socket.id}] received event: ${event}`, args);
-        // });
 
 
         /**
@@ -42,6 +38,7 @@ export function registerSocketEvents(io: Server) {
                 }
             });
         }
+
         socket.on('disconnect', async (reason) => {
             const { roomId } = socket.data;
 
@@ -119,14 +116,9 @@ export function registerSocketEvents(io: Server) {
                 select: { username: true }
             });
             if (!dbUser) {
-                console.warn(`User not found for ID: ${user.userID}`);
+                console.warn(`User not found for ID: ${user.userId}`);
                 return;
             }
-            const message = {
-                userId: user.userId,
-                content: data.content,
-                timestamp: Date.now(),
-            };
             try {
                 const redisMessage = {
                     userId: user.userId,
@@ -172,12 +164,10 @@ export function registerSocketEvents(io: Server) {
         socket.on('direct:join', async ({ conversationId }) => {
             socket.join(conversationId);
             socket.data.conversationId = conversationId;
-            console.log(`User ${userId} joined direct conversation ${conversationId}`);
         });
         socket.on('direct:leave', async ({ conversationId }) => {
             socket.leave(conversationId);
             delete socket.data.conversationId;
-            console.log(`User ${userId} left direct conversation ${conversationId}`);
         });
         socket.on('direct:message', async ({ conversationId, content, fileName, fileUrl, mimeType }) => {
             if (!conversationId || (!content && !fileUrl) || !userId) {
@@ -211,7 +201,6 @@ export function registerSocketEvents(io: Server) {
                     fileUrl: message.fileUrl,
                     mimeType: message.mimeType
                 };
-                console.log('hal socket serverm ', conversationId);
                 io.to(conversationId).emit('direct:message', payload);
             } catch (error) {
                 console.error('Failed to send direct message:', error);
@@ -272,7 +261,6 @@ export function registerSocketEvents(io: Server) {
                     participant: videoCall.participant,
                 });
 
-                console.log(`Video call initiated: ${videoCall.id} in conversation ${conversationId}`);
             } catch (error) {
                 console.error('Failed to initiate video call:', error);
                 socket.emit('video:call:error', { message: 'Failed to initiate call' });
@@ -323,7 +311,6 @@ export function registerSocketEvents(io: Server) {
                     conversationId: call.conversationId,
                 });
 
-                console.log(`Video call accepted: ${videoCallId}`);
             } catch (error) {
                 console.error('Failed to accept video call:', error);
                 socket.emit('video:call:error', { message: 'Failed to accept call' });
@@ -369,7 +356,6 @@ export function registerSocketEvents(io: Server) {
                     conversationId: call.conversationId,
                 });
 
-                console.log(`Video call rejected: ${videoCallId}`);
             } catch (error) {
                 console.error('Failed to reject video call:', error);
             }
@@ -421,7 +407,6 @@ export function registerSocketEvents(io: Server) {
                     duration,
                 });
 
-                console.log(`Video call ended: ${videoCallId}, duration: ${duration}s`);
             } catch (error) {
                 console.error('Failed to end video call:', error);
             }
@@ -453,7 +438,6 @@ export function registerSocketEvents(io: Server) {
                     from: userId,
                 });
 
-                console.log(`WebRTC offer sent for call: ${videoCallId}`);
             } catch (error) {
                 console.error('Failed to send WebRTC offer:', error);
             }
@@ -485,7 +469,6 @@ export function registerSocketEvents(io: Server) {
                     from: userId,
                 });
 
-                console.log(`WebRTC answer sent for call: ${videoCallId}`);
             } catch (error) {
                 console.error('Failed to send WebRTC answer:', error);
             }
@@ -517,7 +500,6 @@ export function registerSocketEvents(io: Server) {
                     from: userId,
                 });
 
-                console.log(`ICE candidate sent for call: ${videoCallId}`);
             } catch (error) {
                 console.error('Failed to send ICE candidate:', error);
             }
@@ -549,7 +531,6 @@ export function registerSocketEvents(io: Server) {
                     from: userId,
                 });
 
-                console.log(`Call status update: ${videoCallId} - ${status}`);
             } catch (error) {
                 console.error('Failed to send call status:', error);
             }
