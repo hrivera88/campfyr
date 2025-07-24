@@ -228,7 +228,7 @@ const AuthPageLayout = ({
               {showLogo && (
                 <Box
                   component="img"
-                  src="/campfyr-logo.svg"
+                  src="/campfire-logo.svg"
                   alt="Campfyr logo"
                   sx={{
                     width: 'auto',
