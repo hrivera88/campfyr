@@ -1,14 +1,13 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: chatio
+      POSTGRES_DB: campfyr
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -33,7 +32,7 @@ services:
       - postgres
       - redis
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/chatio
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/campfyr
       REDIS_URL: redis://redis:6379
     env_file:
       - ./api/.env.development
