@@ -39,7 +39,10 @@ const ChatWindow = ({
    * WebSockets
    */
   const fallbackSocket = useSocket();
-  const socket = socketOverride ?? fallbackSocket;
+  // Use global socket as emergency fallback
+  const globalSocket = (window as any).socket;
+  const socket = socketOverride ?? fallbackSocket ?? globalSocket;
+  
 
   /**
    * Theme
@@ -56,6 +59,7 @@ const ChatWindow = ({
   );
   const user = useSelector((state: RootState) => state?.auth.user);
   const isMember = useSelector((state: RootState) => state?.room.isMember);
+  
   const isDM = mode === "dm";
   const chatId = isDM ? activeConversation?.id : activeRoom?.id;
   const queryKey =
