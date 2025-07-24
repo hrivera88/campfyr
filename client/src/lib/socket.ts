@@ -29,7 +29,7 @@ export async function connectSocket(): Promise<Socket | null> {
 
     socket = io("http://localhost:3001", {
         auth: { token },
-        transports: ['websocket'],
+        transports: ['websocket', 'polling'], // Restore WebSocket with polling fallback
         autoConnect: true,
         reconnection: true,
         reconnectionDelay: 1000,
@@ -37,59 +37,26 @@ export async function connectSocket(): Promise<Socket | null> {
         reconnectionAttempts: maxReconnectAttempts
     });
 
-    // Handle authentication errors
-    socket.on('connect_error', async (error) => {
-        console.warn('Socket connection error:', error.message);
-        
-        // If authentication failed, try to refresh token and reconnect
-        if (error.message.includes('Authentication failed') || error.message.includes('jwt')) {
-            if (reconnectAttempts < maxReconnectAttempts) {
-                console.log(`Attempting token refresh and reconnection (${reconnectAttempts + 1}/${maxReconnectAttempts})`);
-                
-                try {
-                    const newToken = await refreshAccessToken();
-                    if (newToken && socket) {
-                        // Update auth and force reconnection
-                        socket.auth = { token: newToken };
-                        socket.connect();
-                        reconnectAttempts++;
-                    }
-                } catch (refreshError) {
-                    console.error('Token refresh failed during reconnection:', refreshError);
-                    // Emit logout event if refresh fails
-                    window.dispatchEvent(new CustomEvent('auth:logout'));
-                }
-            } else {
-                console.error('Max reconnection attempts reached. Logging out.');
-                window.dispatchEvent(new CustomEvent('auth:logout'));
+    // Wait for connection before returning
+    return new Promise((resolve, reject) => {
+        socket!.on('connect', () => {
+            reconnectAttempts = 0;
+            // Make socket available globally for debugging
+            (window as any).socket = socket;
+            resolve(socket);
+        });
+
+        socket!.on('connect_error', (error) => {
+            reject(error);
+        });
+
+        // Timeout after 10 seconds
+        setTimeout(() => {
+            if (!socket!.connected) {
+                reject(new Error('Socket connection timeout'));
             }
-        }
+        }, 10000);
     });
-
-    // Reset reconnection attempts on successful connection
-    socket.on('connect', () => {
-        console.log('Socket connected successfully');
-        reconnectAttempts = 0;
-    });
-
-    // Handle disconnection
-    socket.on('disconnect', (reason) => {
-        console.log('Socket disconnected:', reason);
-        
-        // If disconnected due to server action or auth issues, try to reconnect with fresh token
-        if (reason === 'io server disconnect' || reason.includes('auth')) {
-            setTimeout(async () => {
-                try {
-                    await refreshAccessToken();
-                    socket?.connect();
-                } catch (error) {
-                    console.warn('Could not refresh token for reconnection:', error);
-                }
-            }, 1000);
-        }
-    });
-
-    return socket;
 }
 
 export function getSocket(): Socket | null {
