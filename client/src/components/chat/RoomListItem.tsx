@@ -142,8 +142,10 @@ const RoomListItem = ({
                 <Box
                   sx={{
                     display: 'flex',
+                    justifyContent: 'center',
                     alignItems: 'center',
                     gap: 1,
+                    height: '44px',
                     width: '100%',
                   }}
                 >
@@ -158,6 +160,7 @@ const RoomListItem = ({
                     />
                   )}
                   <ListItemText
+                    sx={{ mb: 0.5 }}
                     primary={
                       <Typography sx={{ fontSize: '.90rem' }}>
                         {capitalizeWords(user.username)}
