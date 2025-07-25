@@ -122,7 +122,9 @@ const MessageList = ({
                   src={avatarUrl}
                   alt={'User avatar'}
                   sx={{ width: 32, height: 32 }}
-                />
+                >
+                  {sender?.username?.[0].toUpperCase()}
+                </Avatar>
                 <Box
                   key={idx}
                   sx={{
