@@ -2,7 +2,6 @@ import { io, Socket } from 'socket.io-client';
 import { isTokenExpired, refreshAccessToken } from '../utils/auth-tokens';
 
 let socket: Socket | null = null;
-let reconnectAttempts = 0;
 const maxReconnectAttempts = 5;
 
 export async function connectSocket(): Promise<Socket | null> {
@@ -40,7 +39,6 @@ export async function connectSocket(): Promise<Socket | null> {
     // Wait for connection before returning
     return new Promise((resolve, reject) => {
         socket!.on('connect', () => {
-            reconnectAttempts = 0;
             // Make socket available globally for debugging
             (window as any).socket = socket;
             resolve(socket);
@@ -67,6 +65,5 @@ export function disconnectSocket(): void {
     if (socket) {
         socket.disconnect();
         socket = null;
-        reconnectAttempts = 0;
     }
 }
